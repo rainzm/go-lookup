@@ -21,6 +21,7 @@ var (
 	ErrMalformedIndex    = errors.New("Malformed index key")
 	ErrInvalidIndexUsage = errors.New("Invalid index key usage")
 	ErrKeyNotFound       = errors.New("Unable to find the key")
+	ErrIndexOutOfRange   = errors.New("Index out of range")
 )
 
 // LookupString performs a lookup into a value, using a string. Same as `Loookup`
@@ -86,6 +87,10 @@ func getValueByName(v reflect.Value, key string) (reflect.Value, error) {
 	if index != -1 {
 		if value.Type().Kind() != reflect.Slice {
 			return reflect.Value{}, ErrInvalidIndexUsage
+		}
+
+		if index >= value.Len() {
+			return reflect.Value{}, ErrIndexOutOfRange
 		}
 
 		value = value.Index(index)
